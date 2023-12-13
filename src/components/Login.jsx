@@ -1,24 +1,15 @@
-import { teal, cyan } from "@mui/material/colors";
-import { Box, TextField, Grid, Button, ButtonGroup } from "@mui/material";
-import { PersonAdd } from "@mui/icons-material";
+import { teal} from "@mui/material/colors";
+import { Box, TextField, Grid, Button } from "@mui/material";
 import { Form, Field, Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
-
-import { Link as RouterLink} from "react-router-dom";
-
-import { useDispatch, useSelector } from "react-redux";
-import { handleUser } from "../reducers/userReducer";
 import { useLogin } from "../hooks/useLogin";
 
 const Login = () => {
   const tealColor = teal[500];
-  const cyanColor = cyan[100];
-  const { typeUser } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-
+  
   const initialValues = {
-    correo: "",
-    password: "",
+    correo: "feresca@gmail.com",
+    password: "Fer$85OE",
   };
 
   const validationSchema = Yup.object().shape({
@@ -36,48 +27,10 @@ const Login = () => {
     <>
       <Box display={"flex"} justifyContent={"center"}>
         <Box margin={1} padding={2} border={4} borderColor={tealColor}>
-          <ButtonGroup
-            variant="text"
-            aria-label="text button group"
-            sx={{ marginBottom: "1rem" }}
-          >
-            <Button
-              style={{
-                backgroundColor: typeUser === "patient" && cyanColor,
-              }}
-              onClick={() => {
-                dispatch(handleUser("patient"));
-              }}
-            >
-              ¿Eres paciente?
-            </Button>
-            <Button
-              style={{
-                backgroundColor: typeUser === "doctor" && cyanColor,
-              }}
-              onClick={() => {
-                dispatch(handleUser("doctor"));
-              }}
-            >
-              ¿Eres médico?
-            </Button>
-            <Button
-              style={{
-                backgroundColor: typeUser === "receptionist" && cyanColor,
-              }}
-              onClick={() => {
-                dispatch(handleUser("receptionist"));
-              }}
-            >
-              ¿Eres recepcionista?
-            </Button>
-          </ButtonGroup>
-
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={onSubmit}
-            key={typeUser}
           >
             <Form>
               <Grid container rowSpacing={4} spacing={2}>
@@ -119,17 +72,6 @@ const Login = () => {
               </Button>
             </Form>
           </Formik>
-          {typeUser === "patient" && (
-            <Box display={"flex"} alignItems={"center"}>
-              <PersonAdd />
-              <span>
-                No tienes cuenta?
-                <RouterLink to="/registerPatient">
-                  <Button size="large">Registrate</Button>
-                </RouterLink>
-              </span>
-            </Box>
-          )}
         </Box>
       </Box>
     </>

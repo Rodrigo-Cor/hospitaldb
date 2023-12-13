@@ -4,7 +4,7 @@ const Home = () => {
     <>
       <Box sx={{ m: "1rem" }}>
         <Typography variant="body1" gutterBottom>
-          Bienvenido a la página de inicio del hospital {user}
+          Bienvenido a la página de inicio del hospital 
         </Typography>
       </Box>
     </>
