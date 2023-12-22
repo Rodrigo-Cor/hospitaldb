@@ -16,7 +16,7 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const useAppointment = () => {
+const useScheduleAppointment = () => {
   const [availableDoctors, setAvailableDoctors] = useState([]);
   const [specialtiesCost, setSpecialtiesCost] = useState([]);
   const [selectedHorario, setSelectedHorario] = useState([]);
@@ -35,8 +35,8 @@ const useAppointment = () => {
     fetchData();
   }, []);
 
-  const scheduleDoctor = useCallback(async ({ consultorio }) => {
-    const { success, message } = await fetchScheduleDoctors({ consultorio });
+  const scheduleDoctor = useCallback(async ({ no_empleado }) => {
+    const { success, message } = await fetchScheduleDoctors({ no_empleado });
 
     if (success) {
       setSelectedHorario(message);
@@ -68,6 +68,8 @@ const useAppointment = () => {
       });
     };
 
+    
+
     const d1 = dayjs.utc(fecha_hora_inicio).tz("America/Mexico_City");
     const d2 = dayjs.utc(fecha_hora_final).tz("America/Mexico_City");
 
@@ -91,6 +93,7 @@ const useAppointment = () => {
       const { success, message } = await registerAppointment({
         id_horario: id,
         nss,
+        fecha_hora_inicio,
       });
 
       if (success) {
@@ -114,4 +117,4 @@ const useAppointment = () => {
   };
 };
 
-export default useAppointment;
+export default useScheduleAppointment;

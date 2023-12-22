@@ -1,12 +1,13 @@
-import { teal} from "@mui/material/colors";
+import { teal } from "@mui/material/colors";
 import { Box, TextField, Grid, Button } from "@mui/material";
 import { Form, Field, Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useLogin } from "../hooks/useLogin";
+import { useSelector } from "react-redux";
 
 const Login = () => {
   const tealColor = teal[500];
-  
+
   const initialValues = {
     correo: "feresca@gmail.com",
     password: "Fer$85OE",
@@ -17,6 +18,12 @@ const Login = () => {
   });
 
   const { processRequest, loginUser } = useLogin();
+
+  const { loading } = useSelector((state) => state.patient);
+  
+  if (processRequest || loading) {
+    return <div>Cargando...</div>;
+  }
 
   const onSubmit = (values) => {
     console.log("Formulario enviado:", values);

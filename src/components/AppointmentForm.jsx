@@ -16,7 +16,7 @@ import { DateTimeField } from "@mui/x-date-pickers/DateTimeField";
 import { Form, Field, Formik, ErrorMessage } from "formik";
 import { string } from "prop-types";
 
-import useAppointment from "../hooks/useAppointment";
+import useSheduleAppointment from "../hooks/useScheduleAppointment";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -36,11 +36,11 @@ const AppointmentForm = ({ nss }) => {
     selectedHorario,
     cleanSchedules,
     registerAppointmentPatient,
-  } = useAppointment();
+  } = useSheduleAppointment();
 
   const initialValues = {
     especialidad: "",
-    consultorio: "",
+    no_empleado: "",
     schedule: "",
   };
 
@@ -49,12 +49,17 @@ const AppointmentForm = ({ nss }) => {
     const { id, fecha_hora_inicio, fecha_hora_final } = JSON.parse(
       values.schedule
     );
+
+    const consultorio = availableDoctors.find(
+      ({ no_empleado }) => no_empleado === values.no_empleado
+    ).consultorio;
+
     await registerAppointmentPatient({
       id,
       fecha_hora_inicio,
       fecha_hora_final,
       nss,
-      consultorio: values.consultorio,
+      consultorio: consultorio,
     });
   };
 
@@ -65,8 +70,8 @@ const AppointmentForm = ({ nss }) => {
       errors.especialidad = "La especialidad es requerida";
     }
 
-    if (!values.consultorio) {
-      errors.consultorio = "El consultorio es requerido";
+    if (!values.no_empleado) {
+      errors.no_empleado = "El consultorio es requerido";
     }
 
     if (!values.schedule) {
@@ -100,7 +105,7 @@ const AppointmentForm = ({ nss }) => {
                           value={values.especialidad}
                           onChange={(e) => {
                             handleChange(e);
-                            setFieldValue("consultorio", "");
+                            setFieldValue("no_empleado", "");
                             cleanSchedules();
                           }}
                         >
@@ -120,7 +125,7 @@ const AppointmentForm = ({ nss }) => {
                   </Field>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Field name="consultorio">
+                  <Field name="no_empleado">
                     {({ field }) => (
                       <>
                         <InputLabel>Médico</InputLabel>
@@ -129,9 +134,9 @@ const AppointmentForm = ({ nss }) => {
                           fullWidth
                           variant="outlined"
                           label="Médico"
-                          value={values.consultorio}
+                          value={values.no_empleado}
                           onChange={(e) => {
-                            scheduleDoctor({ consultorio: e.target.value });
+                            scheduleDoctor({ no_empleado: e.target.value });
                             handleChange(e);
                             cleanSchedules();
                           }}
@@ -141,12 +146,18 @@ const AppointmentForm = ({ nss }) => {
                               ({ especialidad }) =>
                                 especialidad === values.especialidad
                             )
-                            .map(({ consultorio, nombreCompleto }) => (
-                              <MenuItem key={consultorio} value={consultorio}>
-                                Médico:{nombreCompleto}. Consultorio:
-                                {consultorio}
-                              </MenuItem>
-                            ))}
+                            .map(
+                              ({
+                                consultorio,
+                                nombreCompleto,
+                                no_empleado,
+                              }) => (
+                                <MenuItem key={no_empleado} value={no_empleado}>
+                                  Médico:{nombreCompleto}. Consultorio:
+                                  {consultorio}
+                                </MenuItem>
+                              )
+                            )}
                         </Select>
                         <ErrorMessage
                           className="error"

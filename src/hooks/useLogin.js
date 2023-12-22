@@ -27,21 +27,25 @@ export const useLogin = () => {
     };
 
     setProcessRequest(true);
-    const { message, success } = await login({
-      correo,
-      password,
-    });
-    console.log(message);
+    try {
+      const { message, success } = await login({
+        correo,
+        password,
+      });
 
-    if (success) {
-      dispatch(handleUser(message));
-      dispatch(handleInformation({ correo, tipo_usuario: message.typeUser }));
-      navigate("/dashboard");
-    } else {
-      genericAlert(message, "error");
+      if (success) {
+        dispatch(handleUser(message));
+        dispatch(handleInformation({ correo, tipo_usuario: message.typeUser }));
+        navigate("/dashboard");
+      } else {
+        genericAlert(message, "error");
+      }
+    } catch (error) {
+      console.error(error);
+      genericAlert("Error inesperado", "error");
+    } finally {
+      setProcessRequest(false);
     }
-
-    setProcessRequest(false);
   };
 
   return { loginUser, processRequest };

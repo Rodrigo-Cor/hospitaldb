@@ -1,3 +1,4 @@
+import PatientHome from "./PatientHome";
 import { useSelector } from "react-redux";
 
 const DashboardUser = () => {
@@ -6,7 +7,9 @@ const DashboardUser = () => {
   return (
     <>
       <h1>La sesion es de un {typeUser}</h1>
-      {typeUser === "patient" ? null : typeUser === "doctor" ? null : null}
+      {typeUser === "Paciente" ? (
+        <PatientHome />
+      ) : typeUser === "Medico" ? null : null}
     </>
   );
 };
