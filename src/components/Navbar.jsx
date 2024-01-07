@@ -31,9 +31,11 @@ const Navbar = () => {
                   </>
                 ) : typeUser === "Medico" ? (
                   <>
+                    {/*
                     <Typography variant="h6">
                       Secciones exclusivas del medico
-                    </Typography>
+                </Typography>
+                */}
                   </>
                 ) : (
                   <>
@@ -48,10 +50,10 @@ const Navbar = () => {
                 <RouterLink to="/dashboard">
                   <Typography variant="body2">
                     {typeUser === "Paciente"
-                      ? "Bienvenido " + nombre_paciente
+                      ? nombre_paciente
                       : typeUser === "Medico"
-                      ? "Bienvenido " + nombre_medico
-                      : "Bienvenido " + nombre_medico}
+                      ? nombre_medico
+                      : nombre_medico}
                   </Typography>
                 </RouterLink>
               </>

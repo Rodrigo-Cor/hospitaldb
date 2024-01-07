@@ -27,7 +27,7 @@ const doctorSlice = createSlice({
   name: "doctor",
   initialState: {
     no_empleado: "",
-    especialidad: -1,
+    especialidad: "",
     consultorio: -1,
     telefono: "",
     nombreCompleto: "",

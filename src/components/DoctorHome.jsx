@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { handleAppointmentInformation } from "../reducers/doctorReducer";
 import GroupButtonAppointment from "./GroupButtonAppointment";
+import AppointmentDoctorInformation from "./AppointmentDoctorInformation";
 
 const DoctorHome = () => {
   const { no_empleado } = useSelector((state) => state.doctor);
@@ -20,6 +21,7 @@ const DoctorHome = () => {
     <>
       <h1>Doctor Home</h1>
       <GroupButtonAppointment />
+      <AppointmentDoctorInformation />
     </>
   );
 };

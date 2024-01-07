@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import Swal from 'sweetalert2';
-import * as Yup from 'yup';
+import Swal from "sweetalert2";
+import * as Yup from "yup";
 import {
   Box,
   Checkbox,
@@ -17,14 +17,20 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useCreateRecipe from "../hooks/useCreateRecipe";
 
-const RecipeForm = (props) => {
-  const { id_cita } = props;
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+const RecipeForm = () => {
+  const { id_cita } = useParams();
+
+  const { especialidad } = useSelector((state) => state.doctor);
+
   const { medicines, services, treatments, createRecipe } = useCreateRecipe();
 
   const validationSchema = Yup.object().shape({
     selectedMedicines: Yup.object().test(
-      'isAnyFieldFilled',
-      'Debe llenar al menos un campo antes de enviar el formulario.',
+      "isAnyFieldFilled",
+      "Debe llenar al menos un campo antes de enviar el formulario.",
       (value) => {
         return (
           Object.values(value).some((medicine) => medicine.checked) ||
@@ -33,8 +39,8 @@ const RecipeForm = (props) => {
       }
     ),
     selectedServices: Yup.object().test(
-      'isAnyFieldFilled',
-      'Debe llenar al menos un campo antes de enviar el formulario.',
+      "isAnyFieldFilled",
+      "Debe llenar al menos un campo antes de enviar el formulario.",
       (value) => {
         return (
           Object.values(value).some((service) => service.checked) ||
@@ -43,8 +49,8 @@ const RecipeForm = (props) => {
       }
     ),
     selectedTreatments: Yup.object().test(
-      'isAnyFieldFilled',
-      'Debe llenar al menos un campo antes de enviar el formulario.',
+      "isAnyFieldFilled",
+      "Debe llenar al menos un campo antes de enviar el formulario.",
       (value) => {
         return (
           Object.values(value).some((treatment) => treatment.checked) ||
@@ -52,11 +58,10 @@ const RecipeForm = (props) => {
         );
       }
     ),
-    diagnostico: Yup.string().required('El diagnóstico es obligatorio'),
+    diagnostico: Yup.string().required("El diagnóstico es obligatorio"),
   });
 
   const onSubmit = async (values) => {
-    //const idCita = values.id_cita;
     const selectedMedicines = Object.entries(values.selectedMedicines)
       .filter(([key, value]) => value.checked)
       .map(([key, value]) => ({
@@ -78,16 +83,26 @@ const RecipeForm = (props) => {
         duracion: value.duration || 1,
       }));
 
+    const consultaId = services.find(({ nombre }) =>
+      nombre.startsWith("Consulta " + especialidad.toLowerCase())
+    ).id;
+    console.log(consultaId);
+
+    const consulta = { id: consultaId, cantidad: 1 };
+    selectedServices.push(consulta);
+
     const diagnostico = values.diagnostico;
 
     console.log({
-      id_cita: values.id_cita,
+      id_cita,
       medicamentos: selectedMedicines,
       servicios: selectedServices,
       tratamientos: selectedTreatments,
       diagnostico: diagnostico,
     });
 
+    //Se quitará cuando acaben las pruebas
+    /*
     const recipeData = await createRecipe({
       id_cita: values.id_cita,
       medicamentos: selectedMedicines,
@@ -95,13 +110,13 @@ const RecipeForm = (props) => {
       tratamientos: selectedTreatments,
       diagnostico: diagnostico,
     });
-
-    const message = recipeData?.message || 'Error al crear la receta';
+    
+    const message = recipeData?.message || "Error al crear la receta";
 
     if (recipeData.success) {
       await Swal.fire({
-        icon: 'success',
-        title: '¡ ' + message + ' !',
+        icon: "success",
+        title: "¡ " + message + " !",
         background: "#272727",
         color: "#effffb",
         showConfirmButton: true,
@@ -112,15 +127,15 @@ const RecipeForm = (props) => {
       });
     } else {
       await Swal.fire({
-        icon: 'error',
-        title: '¡Error!',
+        icon: "error",
+        title: "¡Error!",
         text: message,
       });
     }
+    */
   };
 
   const initialValues = {
-    id_cita: id_cita || "",
     selectedMedicines: {},
     selectedServices: {},
     selectedTreatments: {},
@@ -169,9 +184,7 @@ const RecipeForm = (props) => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
-                    <InputLabel>
-                      Seleccionar Medicamentos
-                    </InputLabel>
+                    <InputLabel>Seleccionar Medicamentos</InputLabel>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container spacing={2}>
@@ -179,7 +192,9 @@ const RecipeForm = (props) => {
                         <Grid item xs={12} md={6} key={medicine.id}>
                           <Field
                             type="checkbox"
-                            name={'selectedMedicines.' + medicine.id + '.checked'}
+                            name={
+                              "selectedMedicines." + medicine.id + ".checked"
+                            }
                           >
                             {({ field }) => (
                               <>
@@ -187,16 +202,34 @@ const RecipeForm = (props) => {
                                   control={
                                     <Checkbox
                                       {...field}
-                                      checked={values.selectedMedicines[medicine.id]?.checked || false}
+                                      checked={
+                                        values.selectedMedicines[medicine.id]
+                                          ?.checked || false
+                                      }
                                       onChange={(e) => {
                                         const checked = e.target.checked;
-                                        setFieldValue('selectedMedicines.' + medicine.id + '.checked', checked);
+                                        setFieldValue(
+                                          "selectedMedicines." +
+                                            medicine.id +
+                                            ".checked",
+                                          checked
+                                        );
                                         if (checked) {
                                           // Si se marca el checkbox, establece la cantidad en 1 por defecto
-                                          setFieldValue('selectedMedicines.' + medicine.id + '.quantity', 1);
+                                          setFieldValue(
+                                            "selectedMedicines." +
+                                              medicine.id +
+                                              ".quantity",
+                                            1
+                                          );
                                         } else {
                                           // Si se desmarca, elimina la cantidad
-                                          setFieldValue('selectedMedicines.' + medicine.id + '.quantity', undefined);
+                                          setFieldValue(
+                                            "selectedMedicines." +
+                                              medicine.id +
+                                              ".quantity",
+                                            undefined
+                                          );
                                         }
                                       }}
                                     />
@@ -204,7 +237,11 @@ const RecipeForm = (props) => {
                                   label={medicine.nombre}
                                 />
                                 <ErrorMessage
-                                  name={'selectedMedicines.' + medicine.id + '.checked'}
+                                  name={
+                                    "selectedMedicines." +
+                                    medicine.id +
+                                    ".checked"
+                                  }
                                   component="div"
                                   className="error"
                                 />
@@ -215,16 +252,29 @@ const RecipeForm = (props) => {
                           {values.selectedMedicines[medicine.id]?.checked && (
                             <Field
                               type="number"
-                              name={'selectedMedicines.' + medicine.id + '.quantity'}
+                              name={
+                                "selectedMedicines." + medicine.id + ".quantity"
+                              }
                             >
                               {({ field }) => (
                                 <TextField
                                   {...field}
                                   label="Cantidad"
-                                  value={values.selectedMedicines[medicine.id]?.quantity || ''}
+                                  value={
+                                    values.selectedMedicines[medicine.id]
+                                      ?.quantity || ""
+                                  }
                                   onChange={(e) => {
-                                    const value = Math.max(0, parseInt(e.target.value, 10) || 0);
-                                    setFieldValue('selectedMedicines.' + medicine.id + '.quantity', value);
+                                    const value = Math.max(
+                                      0,
+                                      parseInt(e.target.value, 10) || 0
+                                    );
+                                    setFieldValue(
+                                      "selectedMedicines." +
+                                        medicine.id +
+                                        ".quantity",
+                                      value
+                                    );
                                   }}
                                 />
                               )}
@@ -244,70 +294,106 @@ const RecipeForm = (props) => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
-                    <InputLabel>
-                      Seleccionar Servicios
-                    </InputLabel>
+                    <InputLabel>Seleccionar Servicios</InputLabel>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container spacing={2}>
-                      {services.map((service) => (
-                        <Grid item xs={12} md={6} key={service.id}>
-                          <Field
-                            type="checkbox"
-                            name={'selectedServices.' + service.id + '.checked'}
-                          >
-                            {({ field }) => (
-                              <>
-                                <FormControlLabel
-                                  control={
-                                    <Checkbox
-                                      {...field}
-                                      checked={values.selectedServices[service.id]?.checked || false}
-                                      onChange={(e) => {
-                                        const checked = e.target.checked;
-                                        setFieldValue('selectedServices.' + service.id + '.checked', checked);
-                                        if (checked) {
-                                          // Si se marca el checkbox, establece la cantidad en 1 por defecto
-                                          setFieldValue('selectedServices.' + service.id + '.quantity', 1);
-                                        } else {
-                                          // Si se desmarca, elimina la cantidad
-                                          setFieldValue('selectedServices.' + service.id + '.quantity', undefined);
-                                        }
-                                      }}
-                                    />
-                                  }
-                                  label={service.nombre}
-                                />
-                                <ErrorMessage
-                                  name={'selectedServices.' + service.id + '.checked'}
-                                  component="div"
-                                  className="error"
-                                />
-                              </>
-                            )}
-                          </Field>
-                          {/* Mostrar el campo de cantidad solo si el checkbox está marcado */}
-                          {values.selectedServices[service.id]?.checked && (
+                      {services
+                        .filter(({ nombre }) => !nombre.startsWith("Consulta"))
+                        .map((service) => (
+                          <Grid item xs={12} md={6} key={service.id}>
                             <Field
-                              type="number"
-                              name={'selectedServices.' + service.id + '.quantity'}
+                              type="checkbox"
+                              name={
+                                "selectedServices." + service.id + ".checked"
+                              }
                             >
                               {({ field }) => (
-                                <TextField
-                                  {...field}
-                                  label="Cantidad"
-                                  value={values.selectedServices[service.id]?.quantity || ''}
-                                  onChange={(e) => {
-                                    // Validar que solo se ingresen números positivos
-                                    const value = Math.max(0, parseInt(e.target.value, 10) || 0);
-                                    setFieldValue('selectedServices.' + service.id + '.quantity', value);
-                                  }}
-                                />
+                                <>
+                                  <FormControlLabel
+                                    control={
+                                      <Checkbox
+                                        {...field}
+                                        checked={
+                                          values.selectedServices[service.id]
+                                            ?.checked || false
+                                        }
+                                        onChange={(e) => {
+                                          const checked = e.target.checked;
+                                          setFieldValue(
+                                            "selectedServices." +
+                                              service.id +
+                                              ".checked",
+                                            checked
+                                          );
+                                          if (checked) {
+                                            setFieldValue(
+                                              "selectedServices." +
+                                                service.id +
+                                                ".quantity",
+                                              1
+                                            );
+                                          } else {
+                                            // Si se desmarca, elimina la cantidad
+                                            setFieldValue(
+                                              "selectedServices." +
+                                                service.id +
+                                                ".quantity",
+                                              undefined
+                                            );
+                                          }
+                                        }}
+                                      />
+                                    }
+                                    label={service.nombre}
+                                  />
+                                  <ErrorMessage
+                                    name={
+                                      "selectedServices." +
+                                      service.id +
+                                      ".checked"
+                                    }
+                                    component="div"
+                                    className="error"
+                                  />
+                                </>
                               )}
                             </Field>
-                          )}
-                        </Grid>
-                      ))}
+                            {/* Mostrar el campo de cantidad solo si el checkbox está marcado */}
+                            {values.selectedServices[service.id]?.checked && (
+                              <Field
+                                type="number"
+                                name={
+                                  "selectedServices." + service.id + ".quantity"
+                                }
+                              >
+                                {({ field }) => (
+                                  <TextField
+                                    {...field}
+                                    label="Cantidad"
+                                    value={
+                                      values.selectedServices[service.id]
+                                        ?.quantity || ""
+                                    }
+                                    onChange={(e) => {
+                                      // Validar que solo se ingresen números positivos
+                                      const value = Math.max(
+                                        0,
+                                        parseInt(e.target.value, 10) || 0
+                                      );
+                                      setFieldValue(
+                                        "selectedServices." +
+                                          service.id +
+                                          ".quantity",
+                                        value
+                                      );
+                                    }}
+                                  />
+                                )}
+                              </Field>
+                            )}
+                          </Grid>
+                        ))}
                     </Grid>
                   </AccordionDetails>
                 </Accordion>
@@ -320,16 +406,16 @@ const RecipeForm = (props) => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
-                    <InputLabel>
-                      Seleccionar Tratamientos
-                    </InputLabel>
+                    <InputLabel>Seleccionar Tratamientos</InputLabel>
                   </AccordionSummary>
                   <AccordionDetails>
                     {treatments.map((treatment) => (
-                      <div key={treatment.id} style={{ marginBottom: '1rem' }}>
+                      <div key={treatment.id} style={{ marginBottom: "1rem" }}>
                         <Field
                           type="checkbox"
-                          name={'selectedTreatments.' + treatment.id + '.checked'}
+                          name={
+                            "selectedTreatments." + treatment.id + ".checked"
+                          }
                         >
                           {({ field }) => (
                             <>
@@ -337,16 +423,34 @@ const RecipeForm = (props) => {
                                 control={
                                   <Checkbox
                                     {...field}
-                                    checked={values.selectedTreatments[treatment.id]?.checked || false}
+                                    checked={
+                                      values.selectedTreatments[treatment.id]
+                                        ?.checked || false
+                                    }
                                     onChange={(e) => {
                                       const checked = e.target.checked;
-                                      setFieldValue('selectedTreatments.' + treatment.id + '.checked', checked);
+                                      setFieldValue(
+                                        "selectedTreatments." +
+                                          treatment.id +
+                                          ".checked",
+                                        checked
+                                      );
                                       if (checked) {
                                         // Si se marca el checkbox, establece la cantidad en 1 por defecto
-                                        setFieldValue('selectedTreatments.' + treatment.id + '.duration', 1);
+                                        setFieldValue(
+                                          "selectedTreatments." +
+                                            treatment.id +
+                                            ".duration",
+                                          1
+                                        );
                                       } else {
                                         // Si se desmarca, elimina la cantidad
-                                        setFieldValue('selectedTreatments.' + treatment.id + '.duration', undefined);
+                                        setFieldValue(
+                                          "selectedTreatments." +
+                                            treatment.id +
+                                            ".duration",
+                                          undefined
+                                        );
                                       }
                                     }}
                                   />
@@ -354,7 +458,11 @@ const RecipeForm = (props) => {
                                 label={treatment.descripcion}
                               />
                               <ErrorMessage
-                                name={'selectedTreatments.' + treatment.id + '.checked'}
+                                name={
+                                  "selectedTreatments." +
+                                  treatment.id +
+                                  ".checked"
+                                }
                                 component="div"
                                 className="error"
                               />
@@ -365,17 +473,30 @@ const RecipeForm = (props) => {
                         {values.selectedTreatments[treatment.id]?.checked && (
                           <Field
                             type="number"
-                            name={'selectedTreatments.' + treatment.id + '.duration'}
+                            name={
+                              "selectedTreatments." + treatment.id + ".duration"
+                            }
                           >
                             {({ field }) => (
                               <TextField
                                 {...field}
                                 label="Duración"
-                                value={values.selectedTreatments[treatment.id]?.duration || ''}
+                                value={
+                                  values.selectedTreatments[treatment.id]
+                                    ?.duration || ""
+                                }
                                 onChange={(e) => {
                                   // Validar que solo se ingresen números positivos
-                                  const value = Math.max(0, parseInt(e.target.value, 10) || 0);
-                                  setFieldValue('selectedTreatments.' + treatment.id + '.duration', value);
+                                  const value = Math.max(
+                                    0,
+                                    parseInt(e.target.value, 10) || 0
+                                  );
+                                  setFieldValue(
+                                    "selectedTreatments." +
+                                      treatment.id +
+                                      ".duration",
+                                    value
+                                  );
                                 }}
                                 sx={{ marginTop: "1rem" }}
                               />
@@ -387,8 +508,15 @@ const RecipeForm = (props) => {
                   </AccordionDetails>
                 </Accordion>
               </Grid>
-              <Grid container rowSpacing={1} spacing={2} marginY={1} alignItems="center" justifyContent="center">
-                <Button type="submit" variant="contained" color="primary" >
+              <Grid
+                container
+                rowSpacing={1}
+                spacing={2}
+                marginY={1}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Button type="submit" variant="contained" color="primary">
                   Crear Receta
                 </Button>
               </Grid>

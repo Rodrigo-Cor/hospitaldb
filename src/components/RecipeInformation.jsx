@@ -16,7 +16,9 @@ import {
   TableRow,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -28,6 +30,8 @@ dayjs.extend(timezone);
 const RecipeInformation = () => {
   const location = useLocation();
   const { recipeData } = location.state;
+
+  const { typeUser } = useSelector((state) => state.user);
 
   const {
     dataRecipe,
@@ -63,53 +67,64 @@ const RecipeInformation = () => {
               Receta Médica No.{recipeId}
             </Typography>
             <Container maxWidth="md">
-              <Grid
-                container
-                rowSpacing={1}
-                spacing={2}
-                marginY={1}
-                alignItems="center"
-                justifyContent="center"
-              >
+              <Grid container rowSpacing={1} spacing={2} marginY={1}>
+                {typeUser === "Medico" && (
+                  <>
+                    <Grid item xs={6} md={6}>
+                      <Typography variant="body1">
+                        <strong>NSS: </strong> {nss}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography variant="body1">
+                        <strong>Paciente: </strong>
+                        {patient}
+                      </Typography>
+                    </Grid>
+                  </>
+                )}
+                {typeUser === "Paciente" && (
+                  <>
+                    <Grid item xs={6} md={6}>
+                      <Typography variant="body1">
+                        <strong>Número de empleado: </strong> {no_empleado}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography variant="body1">
+                        <strong>Consultorio: </strong> {consultorio}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography variant="body1">
+                        <strong>Médico: </strong> {doctor}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                      <Typography variant="body1">
+                        <strong>Especialidad: </strong> {especialidad}
+                      </Typography>
+                    </Grid>
+                  </>
+                )}
                 <Grid item xs={6} md={6}>
-                  <Typography variant="body1">NSS: {nss}</Typography>
-                  <Typography variant="body1">Paciente: {patient}</Typography>
                   <Typography variant="body1">
-                    Fecha Cita: {d1.format("DD-MM-YYYY")}
+                    <strong>Fecha: </strong> {d1.format("DD-MM-YYYY")}
                   </Typography>
+                </Grid>
+                <Grid item xs={6} md={6}>
                   <Typography variant="body1">
-                    Hora Incio y Hora Final: {d1.format("hh:mm a")} -{" "}
+                    <strong>Hora de la cita: </strong> {d1.format("hh:mm a")} -{" "}
                     {d2.format("hh:mm a")}
                   </Typography>
                 </Grid>
-                <Grid item xs={6} md={6}>
-                  <Typography variant="body1">
-                    Número de Empleado: {no_empleado}
-                  </Typography>
-                  <Typography variant="body1">
-                    Consultorio: {consultorio}
-                  </Typography>
-                  <Typography variant="body1">Médico: {doctor}</Typography>
-                  <Typography variant="body1">
-                    Especialidad: {especialidad}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-              <Grid
-                container
-                rowSpacing={1}
-                spacing={2}
-                marginY={1}
-                justifyContent="center"
-              >
-                <Grid item md={6}>
+                <Grid item md={12} display={"flex"} justifyContent={"center"}>
                   <Typography
                     variant="body1"
                     paragraph
                     style={{ textAlign: "justify" }}
                   >
-                    Diagnóstico: {diagnostico}
+                    <strong>Diagnóstico: </strong> {diagnostico}
                   </Typography>
                 </Grid>
               </Grid>
@@ -133,7 +148,7 @@ const RecipeInformation = () => {
                     gutterBottom
                     style={{ marginTop: "1rem" }}
                   >
-                    Tratamientos Recetados
+                    Tratamientos recetados
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -205,7 +220,7 @@ const RecipeInformation = () => {
                     gutterBottom
                     style={{ marginTop: "1rem" }}
                   >
-                    Medicamentos Recetados
+                    Medicamentos recetados
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -247,7 +262,7 @@ const RecipeInformation = () => {
                               textAlign: "center",
                             }}
                           >
-                            Costo Unitario
+                            Costo unitario
                           </TableCell>
                           <TableCell
                             style={{
@@ -256,7 +271,7 @@ const RecipeInformation = () => {
                               textAlign: "center",
                             }}
                           >
-                            Costo Total
+                            Costo total
                           </TableCell>
                         </TableRow>
                       </TableHead>
@@ -308,7 +323,7 @@ const RecipeInformation = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    Costo Total de Medicamentos: $
+                    Costo total de medicamentos: $
                     {costoTotalMedicamentos.toFixed(2)}
                   </Typography>
                 </AccordionDetails>
@@ -333,7 +348,7 @@ const RecipeInformation = () => {
                     gutterBottom
                     style={{ marginTop: "1rem" }}
                   >
-                    Servicios Utilizados
+                    Servicios utilizados
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -366,7 +381,7 @@ const RecipeInformation = () => {
                               textAlign: "center",
                             }}
                           >
-                            Costo Unitario
+                            Costo unitario
                           </TableCell>
                           <TableCell
                             style={{
@@ -375,7 +390,7 @@ const RecipeInformation = () => {
                               textAlign: "center",
                             }}
                           >
-                            Costo Total
+                            Costo total
                           </TableCell>
                         </TableRow>
                       </TableHead>
@@ -425,7 +440,7 @@ const RecipeInformation = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    Costo Total de Servicios: ${costoTotalServicios.toFixed(2)}
+                    Costo total de servicios: ${costoTotalServicios.toFixed(2)}
                   </Typography>
                 </AccordionDetails>
               </Accordion>
@@ -441,7 +456,7 @@ const RecipeInformation = () => {
                   fontWeight: "bold",
                 }}
               >
-                Costo Total de Receta (Medicamentos + Servicios): $
+                Costo total de receta (medicamentos + servicios): $
                 {(costoTotalMedicamentos + costoTotalServicios).toFixed(2)}
               </Typography>
             </Box>

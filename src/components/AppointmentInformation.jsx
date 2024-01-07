@@ -62,8 +62,6 @@ const CancelAppointment = ({ id, onTime, no_empleado, id_horario }) => {
     id_horario: number.isRequired,
   };
 
-  console.log(id_horario);
-
   const { cancelAppointment, getScheduleModify } = useAppointmentPatient();
   return (
     <Box>
@@ -171,6 +169,7 @@ const AppointmentTable = ({ appointments }) => {
                 fecha_hora_final,
                 status,
                 onTime,
+                id_receta,
               },
               index
             ) => (
@@ -227,7 +226,7 @@ const AppointmentTable = ({ appointments }) => {
                   />
                 </TableCell>
                 <TableCell align="center">
-                  {status === 4 ? (
+                  {status === 4 || id_receta !== null ? (
                     <Button
                       variant="contained"
                       color="primary"
@@ -250,9 +249,6 @@ const AppointmentTable = ({ appointments }) => {
     </TableContainer>
   );
 };
-
-/*
- */
 
 const AppointmentInformation = () => {
   const patient = useSelector((state) => state.patient);

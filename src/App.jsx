@@ -7,24 +7,26 @@ import Login from "./components/Login";
 import DashboardUser from "./components/DashboardUser";
 import AppointmentForm from "./components/AppointmentForm";
 import RecipeInformation from "./components/RecipeInformation";
-import RecipeForm from "./components/RecipeForm";
 import DeleteConsultoryForm from "./components/DeleteConsultoryForm";
 import AppointmentModifyForm from "./components/AppointmentModifyForm";
-import TestComponent from "./components/TestComponent";
+import RecipeForm from "./components/RecipeForm";
+
 //import FormRegister from "./FormRegister";
 
 const App = () => {
   const { isLogged } = useSelector((state) => state.user);
   const { nss } = useSelector((state) => state.patient);
-  const id_cita = "5";
+
   return (
     <>
       <BrowserRouter>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/RecipeForm" element={<RecipeForm id_cita={id_cita} />} />
-          <Route path="/DeleteConsultoryForm" element={<DeleteConsultoryForm />} /> 
+          <Route
+            path="/DeleteConsultoryForm"
+            element={<DeleteConsultoryForm />}
+          />
           <Route path="/login" element={<Login />} />
           {isLogged ? (
             <>
@@ -32,6 +34,10 @@ const App = () => {
               <Route
                 path="/dashboard/create"
                 element={<AppointmentForm nss={nss} />}
+              />
+              <Route
+                path="/dashboard/createrecipe/:id_cita"
+                element={<RecipeForm />}
               />
               <Route
                 path="/dashboard/appointmentModify"
