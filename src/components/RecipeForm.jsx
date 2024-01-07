@@ -1,5 +1,6 @@
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import Swal from 'sweetalert2';
+import * as Yup from 'yup';
 import {
   Box,
   Checkbox,
@@ -16,87 +17,123 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useCreateRecipe from "../hooks/useCreateRecipe";
 
-const RecipeForm = ( props ) => {
+const RecipeForm = (props) => {
   const { id_cita } = props;
   const { medicines, services, treatments, createRecipe } = useCreateRecipe();
 
+  const validationSchema = Yup.object().shape({
+    selectedMedicines: Yup.object().test(
+      'isAnyFieldFilled',
+      'Debe llenar al menos un campo antes de enviar el formulario.',
+      (value) => {
+        return (
+          Object.values(value).some((medicine) => medicine.checked) ||
+          value === undefined
+        );
+      }
+    ),
+    selectedServices: Yup.object().test(
+      'isAnyFieldFilled',
+      'Debe llenar al menos un campo antes de enviar el formulario.',
+      (value) => {
+        return (
+          Object.values(value).some((service) => service.checked) ||
+          value === undefined
+        );
+      }
+    ),
+    selectedTreatments: Yup.object().test(
+      'isAnyFieldFilled',
+      'Debe llenar al menos un campo antes de enviar el formulario.',
+      (value) => {
+        return (
+          Object.values(value).some((treatment) => treatment.checked) ||
+          value === undefined
+        );
+      }
+    ),
+    diagnostico: Yup.string().required('El diagnóstico es obligatorio'),
+  });
+
+  const onSubmit = async (values) => {
+    //const idCita = values.id_cita;
+    const selectedMedicines = Object.entries(values.selectedMedicines)
+      .filter(([key, value]) => value.checked)
+      .map(([key, value]) => ({
+        id: parseInt(key, 10),
+        cantidad: value.quantity || 1,
+      }));
+
+    const selectedServices = Object.entries(values.selectedServices)
+      .filter(([key, value]) => value.checked)
+      .map(([key, value]) => ({
+        id: parseInt(key, 10),
+        cantidad: value.quantity || 1,
+      }));
+
+    const selectedTreatments = Object.entries(values.selectedTreatments)
+      .filter(([key, value]) => value.checked)
+      .map(([key, value]) => ({
+        id: parseInt(key, 10),
+        duracion: value.duration || 1,
+      }));
+
+    const diagnostico = values.diagnostico;
+
+    console.log({
+      id_cita: values.id_cita,
+      medicamentos: selectedMedicines,
+      servicios: selectedServices,
+      tratamientos: selectedTreatments,
+      diagnostico: diagnostico,
+    });
+
+    const recipeData = await createRecipe({
+      id_cita: values.id_cita,
+      medicamentos: selectedMedicines,
+      servicios: selectedServices,
+      tratamientos: selectedTreatments,
+      diagnostico: diagnostico,
+    });
+
+    const message = recipeData?.message || 'Error al crear la receta';
+
+    if (recipeData.success) {
+      await Swal.fire({
+        icon: 'success',
+        title: '¡ ' + message + ' !',
+        background: "#272727",
+        color: "#effffb",
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+      });
+    } else {
+      await Swal.fire({
+        icon: 'error',
+        title: '¡Error!',
+        text: message,
+      });
+    }
+  };
+
+  const initialValues = {
+    id_cita: id_cita || "",
+    selectedMedicines: {},
+    selectedServices: {},
+    selectedTreatments: {},
+    diagnostico: "",
+  };
 
   return (
     <>
       <Box margin={5}>
         <Formik
-          initialValues={{
-            id_cita: id_cita || "",
-            selectedMedicines: {},
-            selectedServices: {},
-            selectedTreatments: {},
-            diagnostico: "",
-          }}
-
-          onSubmit={async (values) => {
-            //const idCita = values.id_cita;
-
-            const selectedMedicines = Object.entries(values.selectedMedicines)
-              .filter(([key, value]) => value.checked)
-              .map(([key, value]) => ({
-                id: parseInt(key, 10),
-                cantidad: value.quantity || 1,
-              }));
-
-            const selectedServices = Object.entries(values.selectedServices)
-              .filter(([key, value]) => value.checked)
-              .map(([key, value]) => ({
-                id: parseInt(key, 10),
-                cantidad: value.quantity || 1,
-              }));
-
-            const selectedTreatments = Object.entries(values.selectedTreatments)
-              .filter(([key, value]) => value.checked)
-              .map(([key, value]) => ({
-                id: parseInt(key, 10),
-                duracion: value.duration || 1,
-              }));
-
-            const diagnostico = values.diagnostico;
-
-            console.log({
-              id_cita: values.id_cita,
-              medicamentos: selectedMedicines,
-              servicios: selectedServices,
-              tratamientos: selectedTreatments,
-              diagnostico: diagnostico,
-            });
-
-            const recipeData = await createRecipe({
-              id_cita: values.id_cita,
-              medicamentos: selectedMedicines,
-              servicios: selectedServices,
-              tratamientos: selectedTreatments,
-              diagnostico: diagnostico,
-            });
-
-            const message = recipeData?.message || 'Error al crear la receta';
-
-            if (recipeData.success) {
-              await Swal.fire({
-                icon: 'success',
-                title: '¡ ' + message + ' !',
-                background: "#272727",
-                color: "#effffb",
-                showConfirmButton: true,
-                confirmButtonText: "OK",
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                allowEnterKey: false,
-              });
-            } else {
-              await Swal.fire({
-                icon: 'error',
-                title: '¡Error!',
-                text: message,
-              });
-            }
-          }}
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
         >
           {({ values, handleChange, setFieldValue }) => (
             <Form>
@@ -117,6 +154,11 @@ const RecipeForm = ( props ) => {
                     borderRadius: "0.5rem",
                     fontSize: "1rem",
                   }}
+                />
+                <ErrorMessage
+                  name="diagnostico"
+                  component="div"
+                  className="error"
                 />
               </Grid>
               {/*Aqui se encuentran los medicamentos*/}
@@ -140,26 +182,33 @@ const RecipeForm = ( props ) => {
                             name={'selectedMedicines.' + medicine.id + '.checked'}
                           >
                             {({ field }) => (
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    {...field}
-                                    checked={values.selectedMedicines[medicine.id]?.checked || false}
-                                    onChange={(e) => {
-                                      const checked = e.target.checked;
-                                      setFieldValue('selectedMedicines.' + medicine.id + '.checked', checked);
-                                      if (checked) {
-                                        // Si se marca el checkbox, establece la cantidad en 1 por defecto
-                                        setFieldValue('selectedMedicines.' + medicine.id + '.quantity', 1);
-                                      } else {
-                                        // Si se desmarca, elimina la cantidad
-                                        setFieldValue('selectedMedicines.' + medicine.id + '.quantity', undefined);
-                                      }
-                                    }}
-                                  />
-                                }
-                                label={medicine.nombre}
-                              />
+                              <>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      {...field}
+                                      checked={values.selectedMedicines[medicine.id]?.checked || false}
+                                      onChange={(e) => {
+                                        const checked = e.target.checked;
+                                        setFieldValue('selectedMedicines.' + medicine.id + '.checked', checked);
+                                        if (checked) {
+                                          // Si se marca el checkbox, establece la cantidad en 1 por defecto
+                                          setFieldValue('selectedMedicines.' + medicine.id + '.quantity', 1);
+                                        } else {
+                                          // Si se desmarca, elimina la cantidad
+                                          setFieldValue('selectedMedicines.' + medicine.id + '.quantity', undefined);
+                                        }
+                                      }}
+                                    />
+                                  }
+                                  label={medicine.nombre}
+                                />
+                                <ErrorMessage
+                                  name={'selectedMedicines.' + medicine.id + '.checked'}
+                                  component="div"
+                                  className="error"
+                                />
+                              </>
                             )}
                           </Field>
                           {/* Mostrar el campo de cantidad solo si el checkbox está marcado */}
@@ -208,26 +257,33 @@ const RecipeForm = ( props ) => {
                             name={'selectedServices.' + service.id + '.checked'}
                           >
                             {({ field }) => (
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    {...field}
-                                    checked={values.selectedServices[service.id]?.checked || false}
-                                    onChange={(e) => {
-                                      const checked = e.target.checked;
-                                      setFieldValue('selectedServices.' + service.id + '.checked', checked);
-                                      if (checked) {
-                                        // Si se marca el checkbox, establece la cantidad en 1 por defecto
-                                        setFieldValue('selectedServices.' + service.id + '.quantity', 1);
-                                      } else {
-                                        // Si se desmarca, elimina la cantidad
-                                        setFieldValue('selectedServices.' + service.id + '.quantity', undefined);
-                                      }
-                                    }}
-                                  />
-                                }
-                                label={service.nombre}
-                              />
+                              <>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      {...field}
+                                      checked={values.selectedServices[service.id]?.checked || false}
+                                      onChange={(e) => {
+                                        const checked = e.target.checked;
+                                        setFieldValue('selectedServices.' + service.id + '.checked', checked);
+                                        if (checked) {
+                                          // Si se marca el checkbox, establece la cantidad en 1 por defecto
+                                          setFieldValue('selectedServices.' + service.id + '.quantity', 1);
+                                        } else {
+                                          // Si se desmarca, elimina la cantidad
+                                          setFieldValue('selectedServices.' + service.id + '.quantity', undefined);
+                                        }
+                                      }}
+                                    />
+                                  }
+                                  label={service.nombre}
+                                />
+                                <ErrorMessage
+                                  name={'selectedServices.' + service.id + '.checked'}
+                                  component="div"
+                                  className="error"
+                                />
+                              </>
                             )}
                           </Field>
                           {/* Mostrar el campo de cantidad solo si el checkbox está marcado */}
@@ -276,26 +332,33 @@ const RecipeForm = ( props ) => {
                           name={'selectedTreatments.' + treatment.id + '.checked'}
                         >
                           {({ field }) => (
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  {...field}
-                                  checked={values.selectedTreatments[treatment.id]?.checked || false}
-                                  onChange={(e) => {
-                                    const checked = e.target.checked;
-                                    setFieldValue('selectedTreatments.' + treatment.id + '.checked', checked);
-                                    if (checked) {
-                                      // Si se marca el checkbox, establece la cantidad en 1 por defecto
-                                      setFieldValue('selectedTreatments.' + treatment.id + '.duration', 1);
-                                    } else {
-                                      // Si se desmarca, elimina la cantidad
-                                      setFieldValue('selectedTreatments.' + treatment.id + '.duration', undefined);
-                                    }
-                                  }}
-                                />
-                              }
-                              label={treatment.descripcion}
-                            />
+                            <>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    {...field}
+                                    checked={values.selectedTreatments[treatment.id]?.checked || false}
+                                    onChange={(e) => {
+                                      const checked = e.target.checked;
+                                      setFieldValue('selectedTreatments.' + treatment.id + '.checked', checked);
+                                      if (checked) {
+                                        // Si se marca el checkbox, establece la cantidad en 1 por defecto
+                                        setFieldValue('selectedTreatments.' + treatment.id + '.duration', 1);
+                                      } else {
+                                        // Si se desmarca, elimina la cantidad
+                                        setFieldValue('selectedTreatments.' + treatment.id + '.duration', undefined);
+                                      }
+                                    }}
+                                  />
+                                }
+                                label={treatment.descripcion}
+                              />
+                              <ErrorMessage
+                                name={'selectedTreatments.' + treatment.id + '.checked'}
+                                component="div"
+                                className="error"
+                              />
+                            </>
                           )}
                         </Field>
                         {/* Mostrar el campo de cantidad solo si el checkbox está marcado */}

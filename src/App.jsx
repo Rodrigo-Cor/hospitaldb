@@ -23,15 +23,8 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/RecipeForm"
-            element={<RecipeForm id_cita={id_cita} />}
-          />
-          <Route
-            path="/DeleteConsultoryForm"
-            element={<DeleteConsultoryForm />}
-          />
-          <Route path="/TestComponent" element={<TestComponent />} />
+          <Route path="/RecipeForm" element={<RecipeForm id_cita={id_cita} />} />
+          <Route path="/DeleteConsultoryForm" element={<DeleteConsultoryForm />} /> 
           <Route path="/login" element={<Login />} />
           {isLogged ? (
             <>
