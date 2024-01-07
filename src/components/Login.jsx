@@ -8,10 +8,17 @@ import { useSelector } from "react-redux";
 const Login = () => {
   const tealColor = teal[500];
 
+  /*
   const initialValues = {
     correo: "feresca@gmail.com",
     password: "Fer$85OE",
   };
+  */
+ 
+  const initialValues = {
+    correo: "lramos@gmail.com",
+    password: "Lui$23RC",
+  }
 
   const validationSchema = Yup.object().shape({
     correo: Yup.string().email("Correo electrónico no válido"),
@@ -20,7 +27,7 @@ const Login = () => {
   const { processRequest, loginUser } = useLogin();
 
   const { loading } = useSelector((state) => state.patient);
-  
+
   if (processRequest || loading) {
     return <div>Cargando...</div>;
   }

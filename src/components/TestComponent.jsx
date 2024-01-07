@@ -1,19 +1,13 @@
-import React from "react";
-import useRecipeData from "../hooks/useRecipeData";
+import { string } from "prop-types";
+import { useLocation } from "react-router-dom";
 
-const TestComponent = () => {
-  const { recipeData, error } = useRecipeData( 1 );
+const TestComponent = (data) => {
+   const location = useLocation();
+  TestComponent.propTypes = {
+    data: string.isRequired,
+  };
 
-
-  if (error) {
-    return <div>ErroR: {error}</div>;
-  }
-
-  return (
-    <div>
-      {JSON.stringify(recipeData)}
-    </div>
-  );
+  return <div>{location.state.data}</div>;
 };
 
 export default TestComponent;

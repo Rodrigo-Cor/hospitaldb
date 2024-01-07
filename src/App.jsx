@@ -9,13 +9,13 @@ import AppointmentForm from "./components/AppointmentForm";
 import RecipeInformation from "./components/RecipeInformation";
 import RecipeForm from "./components/RecipeForm";
 import DeleteConsultoryForm from "./components/DeleteConsultoryForm";
+import AppointmentModifyForm from "./components/AppointmentModifyForm";
 import TestComponent from "./components/TestComponent";
 //import FormRegister from "./FormRegister";
 
 const App = () => {
   const { isLogged } = useSelector((state) => state.user);
   const { nss } = useSelector((state) => state.patient);
-  const id_citaRecipe = "5";
   const id_cita = "5";
   return (
     <>
@@ -23,9 +23,15 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/RecipeInformation" element={<RecipeInformation id_citaRecipe={id_citaRecipe} />} />
-          <Route path="/RecipeForm" element={<RecipeForm id_cita={id_cita} />} />
-          <Route path="/DeleteConsultoryForm" element={<DeleteConsultoryForm />} />          
+          <Route
+            path="/RecipeForm"
+            element={<RecipeForm id_cita={id_cita} />}
+          />
+          <Route
+            path="/DeleteConsultoryForm"
+            element={<DeleteConsultoryForm />}
+          />
+          <Route path="/TestComponent" element={<TestComponent />} />
           <Route path="/login" element={<Login />} />
           {isLogged ? (
             <>
@@ -35,9 +41,10 @@ const App = () => {
                 element={<AppointmentForm nss={nss} />}
               />
               <Route
-                path="/dashboard/recipe"
-                element={<RecipeInformation id_citaRecipe={id_citaRecipe} />}
+                path="/dashboard/appointmentModify"
+                element={<AppointmentModifyForm />}
               />
+              <Route path="/dashboard/recipe" element={<RecipeInformation />} />
               <Route
                 path="/dashboard/DeleteConsultoryForm"
                 element={<DeleteConsultoryForm />}

@@ -1,16 +1,15 @@
 import { Link as RouterLink } from "react-router-dom";
 import { AppBar, Box, Toolbar, Typography, Button } from "@mui/material";
-import { useSelector, useDispatch } from "react-redux";
-import { logoutUser } from "../reducers/userReducer";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const { typeUser, isLogged } = useSelector((state) => state.user);
-  const { nombreCompleto } = useSelector((state) => state.patient);
-  
-  const dispatch = useDispatch();
-  const handleLogout = () => {
-    dispatch(logoutUser());
-  };
+  const { nombreCompleto: nombre_paciente } = useSelector(
+    (state) => state.patient
+  );
+  const { nombreCompleto: nombre_medico } = useSelector(
+    (state) => state.doctor
+  );
 
   return (
     <>
@@ -28,9 +27,6 @@ const Navbar = () => {
                   <>
                     <RouterLink to="/dashboard/create">
                       <Button variant="body2">Agendar citas</Button>
-                    </RouterLink>
-                    <RouterLink to="/dashboard/recipe">
-                      <Button variant="body2">Ver recetas</Button>
                     </RouterLink>
                   </>
                 ) : typeUser === "Medico" ? (
@@ -50,13 +46,14 @@ const Navbar = () => {
                   </>
                 )}
                 <RouterLink to="/dashboard">
-                  <Typography variant="body1">
-                    Bienvenido {nombreCompleto}
+                  <Typography variant="body2">
+                    {typeUser === "Paciente"
+                      ? "Bienvenido " + nombre_paciente
+                      : typeUser === "Medico"
+                      ? "Bienvenido " + nombre_medico
+                      : "Bienvenido " + nombre_medico}
                   </Typography>
                 </RouterLink>
-                <Button variant="body1" onClick={handleLogout}>
-                  Cerrar Sesión
-                </Button>
               </>
             ) : (
               <RouterLink to="/login">

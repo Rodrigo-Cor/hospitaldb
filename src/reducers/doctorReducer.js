@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getInformationUser } from "../services/login";
-import { fetchPatientAppointments } from "../services/appointments";
+import { fetchDoctorAppointments } from "../services/appointments";
 
-export const handleInformation = createAsyncThunk(
-  "patient/handleInformation",
+export const handleInformationDoctor = createAsyncThunk(
+  "doctor/handleInformation",
   async ({ correo, tipo_usuario }) => {
     const { message, success } = await getInformationUser({
       correo,
@@ -14,21 +14,22 @@ export const handleInformation = createAsyncThunk(
 );
 
 export const handleAppointmentInformation = createAsyncThunk(
-  "patient/handleAppointmentInformation",
-  async ({ nss }) => {
-    const { message, success } = await fetchPatientAppointments({
-      nss,
+  "doctor/handleAppointmentInformation",
+  async ({ no_empleado }) => {
+    const { message, success } = await fetchDoctorAppointments({
+      no_empleado,
     });
     return { message, success };
   }
 );
 
-const patientSlice = createSlice({
-  name: "patient",
+const doctorSlice = createSlice({
+  name: "doctor",
   initialState: {
-    nss: "",
+    no_empleado: "",
+    especialidad: -1,
+    consultorio: -1,
     telefono: "",
-    metodo_pago: "",
     nombreCompleto: "",
     loading: false,
     appointments: [],
@@ -39,13 +40,13 @@ const patientSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(handleInformation.pending, (state) => {
+    builder.addCase(handleInformationDoctor.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(handleAppointmentInformation.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(handleInformation.fulfilled, (state, action) => {
+    builder.addCase(handleInformationDoctor.fulfilled, (state, action) => {
       const { success, message } = action.payload;
       if (success) {
         return {
@@ -69,7 +70,7 @@ const patientSlice = createSlice({
         return state;
       }
     });
-    builder.addCase(handleInformation.rejected, (state) => {
+    builder.addCase(handleInformationDoctor.rejected, (state) => {
       state.loading = false;
     });
     builder.addCase(handleAppointmentInformation.rejected, (state) => {
@@ -78,5 +79,5 @@ const patientSlice = createSlice({
   },
 });
 
-export const { handleNewAppointments } = patientSlice.actions;
-export default patientSlice.reducer;
+export const { handleNewAppointments } = doctorSlice.actions;
+export default doctorSlice.reducer;

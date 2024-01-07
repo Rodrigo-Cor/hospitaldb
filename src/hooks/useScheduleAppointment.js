@@ -68,8 +68,6 @@ const useScheduleAppointment = () => {
       });
     };
 
-    
-
     const d1 = dayjs.utc(fecha_hora_inicio).tz("America/Mexico_City");
     const d2 = dayjs.utc(fecha_hora_final).tz("America/Mexico_City");
 

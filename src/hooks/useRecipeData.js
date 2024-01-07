@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchRecipeData } from "../services/recipes";
+import Swal from "sweetalert2";
 
-const useRecipeData = (id) => {
-  const [recipeData, setRecipeData] = useState([]);
+const useRecipeData = () => {
+  const navigate = useNavigate();
+  const getDataRecipe = async (id) => {
+    const { success, message } = await fetchRecipeData({ id });
+    if (success) {
+      navigate("/dashboard/recipe", { state: { recipeData: message } });
+    } else {
+      Swal.fire(message, "", "error");
+    }
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { success, message } = await fetchRecipeData({ id });
-      if (success) {
-        setRecipeData(message);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  return {recipeData};
+  return { getDataRecipe };
 };
 
 export default useRecipeData;
-
