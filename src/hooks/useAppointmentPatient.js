@@ -18,8 +18,6 @@ const useAppointmentPatient = () => {
       ({ id }) => id === idCita
     );
 
-    console.log(id, id_horario, onTime);
-
     const resultado = await Swal.fire({
       title: "Cancelación de Cita Médica",
       text:

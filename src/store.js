@@ -4,6 +4,7 @@ import thunk from "redux-thunk";
 import userReducer from "./reducers/userReducer";
 import patientReducer from "./reducers/patientReducer";
 import doctorReducer from "./reducers/doctorReducer";
+import recepcionistReducer from "./reducers/recepcionistReducer";
 import filterAppointmentReducer from "./reducers/filterAppointmentReducer";
 
 const rootReducer = combineReducers({
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   patient: patientReducer,
   filterAppointment: filterAppointmentReducer,
   doctor: doctorReducer,
+  recepcionist: recepcionistReducer,
 });
 
 const store = configureStore({

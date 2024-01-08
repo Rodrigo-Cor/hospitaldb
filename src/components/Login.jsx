@@ -7,11 +7,13 @@ import { useSelector } from "react-redux";
 
 const Login = () => {
   const tealColor = teal[500];
-
+ 
+  /*
   const initialValues = {
     correo: "feresca@gmail.com",
     password: "Fer$85OE",
   };
+  */
 
   /*
   const initialValues = {
@@ -19,6 +21,12 @@ const Login = () => {
     password: "Mic$45FS",
   }
   */
+
+  
+  const initialValues = {
+    correo: "recepfernando@gmail.com",
+    password: "Fer$45PS",
+  }; 
 
   const validationSchema = Yup.object().shape({
     correo: Yup.string().email("Correo electrónico no válido"),

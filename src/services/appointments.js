@@ -24,6 +24,50 @@ export const cancelConfirmedAppointment = async ({ id, id_horario }) => {
   }
 };
 
+export const updateStatusAppointment = async ({ id, status }) => {
+  try {
+    const response = await axios.put(
+      "http://localhost:4000/recepcionistas/modifyStatus",
+      {
+        id,
+        status,
+      }
+    );
+    if (response.data) {
+      return { success: true, message: response.data.message };
+    }
+  } catch (error) {
+    if (error.response) {
+      return { success: false, message: error.response.data.message };
+    } else {
+      return {
+        success: false,
+        message: "Ocurrió un error en el servidor para obtener las citas",
+      };
+    }
+  }
+};
+
+export const fetchAppointmentsToday = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:4000/recepcionistas/fetchAppointmentsToday"
+    );
+    if (response.data) {
+      return { success: true, message: response.data };
+    }
+  } catch (error) {
+    if (error.response) {
+      return { success: false, message: error.response.data.message };
+    } else {
+      return {
+        success: false,
+        message: "Ocurrió un error en el servidor para obtener las citas",
+      };
+    }
+  }
+};
+
 export const fetchDoctorAppointments = async ({ no_empleado }) => {
   try {
     const response = await axios.post(

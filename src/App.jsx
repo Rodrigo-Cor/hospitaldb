@@ -8,6 +8,7 @@ import DashboardUser from "./components/DashboardUser";
 import AppointmentForm from "./components/AppointmentForm";
 import RecipeInformation from "./components/RecipeInformation";
 import DeleteConsultoryForm from "./components/DeleteConsultoryForm";
+import DeleteDoctorForm from "./components/DeleteDoctorForm";
 import AppointmentModifyForm from "./components/AppointmentModifyForm";
 import RecipeForm from "./components/RecipeForm";
 
@@ -23,10 +24,6 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/DeleteConsultoryForm"
-            element={<DeleteConsultoryForm />}
-          />
           <Route path="/login" element={<Login />} />
           {isLogged ? (
             <>
@@ -45,14 +42,18 @@ const App = () => {
               />
               <Route path="/dashboard/recipe" element={<RecipeInformation />} />
               <Route
-                path="/dashboard/DeleteConsultoryForm"
+                path="/dashboard/deleteConsultoryForm"
                 element={<DeleteConsultoryForm />}
+              />
+              <Route
+                path="/dashboard/deleteDoctorForm"
+                element={<DeleteDoctorForm />}
               />
             </>
           ) : (
             <Route path="/dashboard/*" element={<Navigate to="/login" />} />
           )}
-          <Route path="*" element={<h1>404</h1>} />
+          <Route path="*" element={<h1>404 Not Found</h1>} />
         </Routes>
       </BrowserRouter>
     </>

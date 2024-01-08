@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { handleUser } from "../reducers/userReducer";
 import { handleInformation } from "../reducers/patientReducer";
 import { handleInformationDoctor } from "../reducers/doctorReducer";
+import { handleInformationRecepcionist } from "../reducers/recepcionistReducer";
 import { handleFilter } from "../reducers/filterAppointmentReducer";
 
 export const useLogin = () => {
@@ -49,6 +50,13 @@ export const useLogin = () => {
         } else if (message.typeUser === "Medico") {
           dispatch(
             handleInformationDoctor({ correo, tipo_usuario: message.typeUser })
+          );
+        } else if (message.typeUser === "Recepcionista") {
+          dispatch(
+            handleInformationRecepcionist({
+              correo,
+              tipo_usuario: message.typeUser,
+            })
           );
         }
         navigate("/dashboard");

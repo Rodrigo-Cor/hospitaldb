@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getInformationUser } from "../services/login";
-import { fetchDoctorAppointments } from "../services/appointments";
+import { fetchAppointmentsToday } from "../services/appointments";
 
-export const handleInformationDoctor = createAsyncThunk(
-  "doctor/handleInformation",
+export const handleInformationRecepcionist = createAsyncThunk(
+  "recepcionist/handleInformation",
   async ({ correo, tipo_usuario }) => {
     const { message, success } = await getInformationUser({
       correo,
@@ -14,45 +14,48 @@ export const handleInformationDoctor = createAsyncThunk(
 );
 
 export const handleAppointmentInformation = createAsyncThunk(
-  "doctor/handleAppointmentInformation",
-  async ({ no_empleado }) => {
-    const { message, success } = await fetchDoctorAppointments({
-      no_empleado,
-    });
+  "recepcionist/handleAppointmentInformation",
+  async () => {
+    console.log("fetching data");
+    const { message, success } = await fetchAppointmentsToday();
     return { message, success };
   }
 );
 
-const doctorSlice = createSlice({
-  name: "doctor",
+const recepcionistSlice = createSlice({
+  name: "recepcionist",
   initialState: {
     no_empleado: "",
-    especialidad: "",
-    consultorio: -1,
-    telefono: "",
     nombreCompleto: "",
     loading: false,
     appointments: [],
   },
-  reducers: {},
+  reducers: {
+    handleNewAppointments: (state, action) => {
+      state.appointments = action.payload;
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(handleInformationDoctor.pending, (state) => {
+    builder.addCase(handleInformationRecepcionist.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(handleAppointmentInformation.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(handleInformationDoctor.fulfilled, (state, action) => {
-      const { success, message } = action.payload;
-      if (success) {
-        return {
-          ...message,
-          loading: false,
-        };
-      } else {
-        return state;
+    builder.addCase(
+      handleInformationRecepcionist.fulfilled,
+      (state, action) => {
+        const { success, message } = action.payload;
+        if (success) {
+          return {
+            ...message,
+            loading: false,
+          };
+        } else {
+          return state;
+        }
       }
-    });
+    );
     builder.addCase(handleAppointmentInformation.fulfilled, (state, action) => {
       const { success, message } = action.payload;
 
@@ -66,7 +69,7 @@ const doctorSlice = createSlice({
         return state;
       }
     });
-    builder.addCase(handleInformationDoctor.rejected, (state) => {
+    builder.addCase(handleInformationRecepcionist.rejected, (state) => {
       state.loading = false;
     });
     builder.addCase(handleAppointmentInformation.rejected, (state) => {
@@ -75,4 +78,5 @@ const doctorSlice = createSlice({
   },
 });
 
-export default doctorSlice.reducer;
+export const { handleNewAppointments } = recepcionistSlice.actions;
+export default recepcionistSlice.reducer;

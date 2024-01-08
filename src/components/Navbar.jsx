@@ -11,6 +11,10 @@ const Navbar = () => {
     (state) => state.doctor
   );
 
+  const { nombreCompleto: nombre_recepcionista } = useSelector(
+    (state) => state.recepcionist
+  );
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -39,11 +43,11 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <Typography variant="h6">
-                      Secciones exclusivas de recepcionista
-                    </Typography>
-                    <RouterLink to="/dashboard/DeleteConsultoryForm">
+                    <RouterLink to="/dashboard/deleteConsultoryForm">
                       <Button variant="body2">Dar de baja consultorios</Button>
+                    </RouterLink>
+                    <RouterLink to="/dashboard/deleteDoctorForm">
+                      <Button variant="body2">Dar de baja médicos</Button>
                     </RouterLink>
                   </>
                 )}
@@ -53,7 +57,7 @@ const Navbar = () => {
                       ? nombre_paciente
                       : typeUser === "Medico"
                       ? nombre_medico
-                      : nombre_medico}
+                      : nombre_recepcionista}
                   </Typography>
                 </RouterLink>
               </>

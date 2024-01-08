@@ -1,23 +1,29 @@
-import {
-  TextField,
-  Button,
-  Box,
-} from "@mui/material";
+import { TextField, Button, Box } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from 'yup';
-import useDeleteConsultory from '../hooks/useDeleteConsultory';
+import * as Yup from "yup";
+import useDelete from "../hooks/useDelete";
 
 const DeleteConsultoryForm = () => {
-  const {
-    processRequest,
-    handleDeleteConsultory,
-  } = useDeleteConsultory();
+  const { processRequest, handleDeleteConsultory } = useDelete();
 
   const validationSchema = Yup.object({
-    consultorio: Yup.string().required('Número de consultorio requerido')
-      .test('not-zero', 'El valor no puede ser cero', value => parseInt(value, 10) !== 0)
-      .test('is-number', 'Ingrese un número válido', value => !isNaN(parseInt(value, 10)))
-      .test('not-negative', 'El valor no puede ser negativo', value => parseInt(value, 10) >= 0),
+    consultorio: Yup.string()
+      .required("Número de consultorio requerido")
+      .test(
+        "not-zero",
+        "El valor no puede ser cero",
+        (value) => parseInt(value, 10) !== 0
+      )
+      .test(
+        "is-number",
+        "Ingrese un número válido",
+        (value) => !isNaN(parseInt(value, 10))
+      )
+      .test(
+        "not-negative",
+        "El valor no puede ser negativo",
+        (value) => parseInt(value, 10) >= 0
+      ),
   });
 
   const initialValues = {
@@ -25,13 +31,24 @@ const DeleteConsultoryForm = () => {
   };
 
   const onSubmit = (values) => {
-    const consultorioValue = parseInt(values.consultorio, 10);
-    handleDeleteConsultory(consultorioValue);
+    const { consultorio: consultorioForm } = values;
+    const consultorioValue = parseInt(consultorioForm, 10);
+    handleDeleteConsultory({ consultorio: consultorioValue });
   };
 
   return (
     <>
-      <Box display={"flex"} justifyContent={"center"} alignItems={"center"}  >
+      <Box
+        display="grid"
+        gridTemplateColumns="1fr 1fr"
+        sx={{
+          "@media (max-width: 576px)": {
+            gridTemplateColumns: "1fr",
+          },
+          m: "1rem"
+        }}
+        
+      >
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -46,7 +63,6 @@ const DeleteConsultoryForm = () => {
                     label="Número del consultorio"
                     variant="outlined"
                     fullWidth
-                    margin="normal"
                   />
                   <ErrorMessage
                     className="error"
@@ -62,12 +78,13 @@ const DeleteConsultoryForm = () => {
               variant="contained"
               color="primary"
               disabled={processRequest}
+              sx={{ marginTop: "0.5rem" }}
             >
               {processRequest ? "Eliminando..." : "Eliminar Consultorio"}
             </Button>
           </Form>
         </Formik>
-      </ Box>
+      </Box>
     </>
   );
 };
