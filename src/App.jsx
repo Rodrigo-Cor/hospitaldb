@@ -10,7 +10,7 @@ import RecipeInformation from "./components/RecipeInformation";
 import DeleteConsultoryForm from "./components/DeleteConsultoryForm";
 import AppointmentModifyForm from "./components/AppointmentModifyForm";
 import RecipeForm from "./components/RecipeForm";
-
+import RegisterForms from "./components/RegisterForms";
 //import FormRegister from "./FormRegister";
 
 const App = () => {
