@@ -28,36 +28,6 @@ const RecipeForm = () => {
   const { medicines, services, treatments, createRecipe } = useCreateRecipe();
 
   const validationSchema = Yup.object().shape({
-    selectedMedicines: Yup.object().test(
-      "isAnyFieldFilled",
-      "Debe llenar al menos un campo antes de enviar el formulario.",
-      (value) => {
-        return (
-          Object.values(value).some((medicine) => medicine.checked) ||
-          value === undefined
-        );
-      }
-    ),
-    selectedServices: Yup.object().test(
-      "isAnyFieldFilled",
-      "Debe llenar al menos un campo antes de enviar el formulario.",
-      (value) => {
-        return (
-          Object.values(value).some((service) => service.checked) ||
-          value === undefined
-        );
-      }
-    ),
-    selectedTreatments: Yup.object().test(
-      "isAnyFieldFilled",
-      "Debe llenar al menos un campo antes de enviar el formulario.",
-      (value) => {
-        return (
-          Object.values(value).some((treatment) => treatment.checked) ||
-          value === undefined
-        );
-      }
-    ),
     diagnostico: Yup.string().required("El diagnóstico es obligatorio"),
   });
 
