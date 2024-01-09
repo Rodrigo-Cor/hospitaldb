@@ -17,13 +17,11 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useCreateRecipe from "../hooks/useCreateRecipe";
 
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
 
 const RecipeForm = () => {
   const { id_cita } = useParams();
-
-  const { especialidad } = useSelector((state) => state.doctor);
+  const navigate = useNavigate();
 
   const { medicines, services, treatments, createRecipe } = useCreateRecipe();
 
@@ -53,6 +51,7 @@ const RecipeForm = () => {
         duracion: value.duration || 1,
       }));
 
+    /*
     const consultaId = services.find(({ nombre }) =>
       nombre.startsWith("Consulta " + especialidad.toLowerCase())
     ).id;
@@ -60,6 +59,7 @@ const RecipeForm = () => {
 
     const consulta = { id: consultaId, cantidad: 1 };
     selectedServices.push(consulta);
+    */
 
     const diagnostico = values.diagnostico;
 
@@ -71,16 +71,14 @@ const RecipeForm = () => {
       diagnostico: diagnostico,
     });
 
-    //Se quitará cuando acaben las pruebas
-    /*
     const recipeData = await createRecipe({
-      id_cita: values.id_cita,
+      id_cita,
       medicamentos: selectedMedicines,
       servicios: selectedServices,
       tratamientos: selectedTreatments,
-      diagnostico: diagnostico,
+      diagnostico,
     });
-    
+
     const message = recipeData?.message || "Error al crear la receta";
 
     if (recipeData.success) {
@@ -95,6 +93,7 @@ const RecipeForm = () => {
         allowEscapeKey: false,
         allowEnterKey: false,
       });
+      navigate("/dashboard");
     } else {
       await Swal.fire({
         icon: "error",
@@ -102,7 +101,6 @@ const RecipeForm = () => {
         text: message,
       });
     }
-    */
   };
 
   const initialValues = {

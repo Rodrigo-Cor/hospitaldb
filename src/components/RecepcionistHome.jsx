@@ -29,7 +29,6 @@ const RecepcionistHome = () => {
   const dispatch = useDispatch();
   const { getDataRecipe, updateStatus } = useRecipeData();
 
-  /*
   useEffect(() => {
     const fetchData = async () => {
       console.log("fetching data");
@@ -39,28 +38,9 @@ const RecepcionistHome = () => {
   }, [dispatch]);
 
   const { appointments } = useSelector((state) => state.recepcionist);
-  */
-  
-  const appointments = [
-    {
-      id: 12,
-      nss: "11139121422",
-      fecha_hora_inicio: "2024-01-08T06:00:00.000Z",
-      fecha_hora_final: "2024-01-08T08:00:00.000Z",
-      consultorio: 12,
-      nameDoctor: "Elsa Prado Luna",
-      namePatient: "Juan Flores Camacho",
-      especialidad: "Oftalmologia",
-      receta: null,
-      status: 1,
-      descripcion: "Cita agendada",
-    },
-  ];
-  
 
   return (
     <>
-      <h1>Recepcionist Home</h1>
       {appointments?.length > 0 && (
         <TableContainer>
           <Table>
@@ -141,47 +121,53 @@ const RecepcionistHome = () => {
                     </TableCell>
                     <TableCell align="center">
                       <section>{descripcion}</section>
-                      {status === 1 && (
-                        <section style={{ marginTop: "1rem" }}>
-                          {dayjs()
-                            .tz("America/Mexico_City")
-                            .isBetween(
-                              fecha_hora_inicio,
-                              dayjs(fecha_hora_inicio).add(45, "minutes")
-                            ) ? (
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              size="small"
-                              onClick={() =>
-                                updateStatus({
-                                  id,
-                                  status: 4,
-                                  descripcion: "Cita en curso",
-                                })
-                              }
-                            >
-                              COBRAR CITA
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="contained"
-                              color="error"
-                              size="small"
-                              onClick={() =>
-                                updateStatus({
-                                  id,
-                                  status: 5,
-                                  descripcion: "No se presentó",
-                                })
-                              }
-                            >
-                              COBRAR POR NO PRESENTARSE
-                            </Button>
-                          )}
-                          {}
-                        </section>
-                      )}
+                      {status === 1 &&
+                        !dayjs()
+                          .tz("America/Mexico_City")
+                          .isBefore(
+                            fecha_hora_inicio,
+                            dayjs(fecha_hora_inicio).diff(30, "minutes")
+                          ) && (
+                          <section style={{ marginTop: "1rem" }}>
+                            {dayjs()
+                              .tz("America/Mexico_City")
+                              .isBetween(
+                                fecha_hora_inicio,
+                                dayjs(fecha_hora_inicio).add(30, "minutes")
+                              ) ? (
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                onClick={() =>
+                                  updateStatus({
+                                    id,
+                                    status: 4,
+                                    descripcion: "Cita en curso",
+                                  })
+                                }
+                              >
+                                COBRAR CITA
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="contained"
+                                color="error"
+                                size="small"
+                                onClick={() =>
+                                  updateStatus({
+                                    id,
+                                    status: 5,
+                                    descripcion: "No se presentó",
+                                  })
+                                }
+                              >
+                                COBRAR POR NO PRESENTARSE
+                              </Button>
+                            )}
+                            {}
+                          </section>
+                        )}
                     </TableCell>
                     <TableCell align="center">
                       {status === 4 || receta != null ? (

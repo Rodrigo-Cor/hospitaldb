@@ -63,12 +63,9 @@ const RecipeInformation = () => {
       <Accordion>
         <Box margin={5}>
           <CardContent>
-            <Typography variant="h4" gutterBottom>
-              Receta Médica No.{recipeId}
-            </Typography>
             <Container maxWidth="md">
               <Grid container rowSpacing={1} spacing={2} marginY={1}>
-                {typeUser === "Medico" && (
+                {(typeUser === "Medico" || typeUser === "Recepcionista") && (
                   <>
                     <Grid item xs={6} md={6}>
                       <Typography variant="body1">
@@ -83,7 +80,7 @@ const RecipeInformation = () => {
                     </Grid>
                   </>
                 )}
-                {typeUser === "Paciente" && (
+                {(typeUser === "Paciente" || typeUser === "Recepcionista") && (
                   <>
                     <Grid item xs={6} md={6}>
                       <Typography variant="body1">

@@ -49,7 +49,6 @@ const AppointmentModifyForm = () => {
 
   return (
     <>
-      <h1>AppointmentModifyForm</h1>
       {
         <Box margin={1}>
           <Formik

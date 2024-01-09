@@ -9,9 +9,11 @@ import AppointmentForm from "./components/AppointmentForm";
 import RecipeInformation from "./components/RecipeInformation";
 import DeleteConsultoryForm from "./components/DeleteConsultoryForm";
 import DeleteDoctorForm from "./components/DeleteDoctorForm";
+import DeletePatientForm from "./components/DeletePatientForm";
+import RegisterDoctorForm from "./components/RegisterDoctorForm";
+import RegisterPatientForm from "./components/RegisterPatientForm";
 import AppointmentModifyForm from "./components/AppointmentModifyForm";
 import RecipeForm from "./components/RecipeForm";
-import RegisterForms from "./components/RegisterForms";
 //import FormRegister from "./FormRegister";
 
 const App = () => {
@@ -48,6 +50,18 @@ const App = () => {
               <Route
                 path="/dashboard/deleteDoctorForm"
                 element={<DeleteDoctorForm />}
+              />
+              <Route
+                path="/dashboard/deletePatientForm"
+                element={<DeletePatientForm />}
+              />
+              <Route
+                path="/dashboard/registerPatientForm"
+                element={<RegisterPatientForm />}
+              />
+              <Route
+                path="/dashboard/registerDoctorForm"
+                element={<RegisterDoctorForm />}
               />
             </>
           ) : (

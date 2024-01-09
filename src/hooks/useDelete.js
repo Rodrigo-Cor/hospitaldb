@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { deleteConsultory, deleteDoctor } from "../services/deletes";
+import {
+  deleteConsultory,
+  deleteDoctor,
+  fetchScheduledAppointmentsPatient,
+  deletePatient,
+} from "../services/deletes";
+
 import Swal from "sweetalert2";
 
 export const useDelete = () => {
@@ -9,6 +15,10 @@ export const useDelete = () => {
   const [appointmentsDoctor, setAppointmentsDoctor] = useState({
     citas: [],
     nameDoctor: "",
+  });
+  const [appointmentsPatient, setAppointmentsPatient] = useState({
+    dataSheduledAppointmets: [],
+    dataPatientCost: {},
   });
 
   const navigate = useNavigate();
@@ -49,6 +59,50 @@ export const useDelete = () => {
     }
   };
 
+  const handleFetchScheduledAppointments = async ({ nss }) => {
+    setProcessRequest(true);
+    try {
+      const { success, message } = await fetchScheduledAppointmentsPatient({
+        nss,
+      });
+
+      console.log(message, success);
+
+      if (success) {
+        const { dataSheduledAppointmets, dataPatientCost } = message;
+        setAppointmentsPatient({
+          dataSheduledAppointmets,
+          dataPatientCost,
+        });
+      } else {
+        deleteAlert(message.message, "error");
+      }
+    } catch (error) {
+      deleteAlert("Error inesperado", "error");
+    } finally {
+      setProcessRequest(false);
+    }
+  };
+
+  const handleDeletePatient = async ({ nss }) => {
+    setProcessRequest(true);
+    try {
+      const { success, message } = await deletePatient({ nss });
+
+      if (success) {
+        deleteAlert(message, "success");
+        navigate("/dashboard");
+      } else {
+        deleteAlert(message, "error");
+      }
+    } catch (error) {
+      console.error(error);
+      deleteAlert("Error inesperado", "error");
+    } finally {
+      setProcessRequest(false);
+    }
+  };
+
   const handleDeleteDoctor = async ({ no_empleado }) => {
     setProcessRequest(true);
     try {
@@ -77,6 +131,9 @@ export const useDelete = () => {
     handleDeleteConsultory,
     handleDeleteDoctor,
     appointmentsDoctor,
+    handleFetchScheduledAppointments,
+    appointmentsPatient,
+    handleDeletePatient,
   };
 };
 

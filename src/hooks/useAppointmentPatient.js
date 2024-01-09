@@ -32,17 +32,10 @@ const useAppointmentPatient = () => {
     });
 
     if (resultado.isConfirmed) {
-      //Prueba rápida
-      const { success, message } = {
-        success: true,
-        message: "Cita cancelada con éxito",
-      };
-      /*
       const { success, message } = await cancelConfirmedAppointment({
         id,
         id_horario,
       });
-*/
 
       if (success) {
         Swal.fire(message, "", "success");

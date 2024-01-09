@@ -44,8 +44,7 @@ const StatusNoPaid = () => {
 const StatusAppointmentToday = () => {
   return (
     <>
-      Su cita es <strong>hoy</strong> y el pago se realizará al finalizar la
-      cita.{" "}
+      Su cita es <strong>hoy</strong> y el pago se realizará al iniciar la cita.{" "}
       <strong>
         En caso de no presentarse se le hará un cobro a su método de pago
         registrado

@@ -8,7 +8,6 @@ const DashboardUser = () => {
 
   return (
     <>
-      <h1>La sesion es de un {typeUser}</h1>
       {typeUser === "Paciente" ? (
         <PatientHome />
       ) : typeUser === "Medico" ? (

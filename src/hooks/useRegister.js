@@ -1,10 +1,12 @@
 import Swal from "sweetalert2";
 import { useState } from "react";
 import { registerDoctor, registerPatient } from "../services/register";
+import { useNavigate } from "react-router-dom";
 
 const useRegister = (userType) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const showAlert = (message, icon) => {
     Swal.fire({
@@ -33,6 +35,7 @@ const useRegister = (userType) => {
 
       if (result.success) {
         showAlert(result.message, "success");
+        navigate("/dashboard");
       } else {
         showAlert(result.message, "error");
       }
